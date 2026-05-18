@@ -12,6 +12,7 @@ total_profit = 0
 item_profit = {}
 
 customer_records = []
+salesman_records = []
 
 while True:
 
@@ -19,6 +20,7 @@ while True:
     print("1. Shopkeeper")
     print("2. Customer")
     print("3. Exit")
+    print("4. Salesman")
 
     choice = input("Enter choice: ")
 
@@ -362,6 +364,107 @@ while True:
 
             if next_customer.lower() != "yes":
                 break
+
+# SALESMAN SECTION
+    elif choice == "4":
+
+        print("\n------ SALESMAN DETAILS ------")
+        salesman_name = input("Enter Salesman Name: ")
+        salesman_sales = 0
+        salesman_commission_rate = 0.05
+
+        while True:
+            print("\n--- SALESMAN MENU ---")
+            print("1. View Items")
+            print("2. Sell Item")
+            print("3. View Salesman Report")
+            print("4. Exit")
+
+            ch = input("Enter choice: ")
+
+            if ch == "1":
+                print("\n+-------------------------------------------+")
+                print("| {:<10} | {:<10} | {:<10} |".format("Item", "Stock", "Price"))
+                print("+-------------------------------------------+")
+
+                for i in range(len(items)):
+                    print("| {:<10} | {:<10} | {:<10} |".format(items[i], stock[i], price[i]))
+
+                print("+-------------------------------------------+")
+
+            elif ch == "2":
+                name = input("Enter item name to sell: ")
+
+                if name in items:
+                    index = items.index(name)
+                    qty = int(input("Enter quantity: "))
+
+                    if qty <= stock[index]:
+                        stock[index] -= qty
+                        sale_amount = qty * price[index]
+                        commission = sale_amount * salesman_commission_rate
+                        profit = sale_amount * 0.20
+
+                        total_revenue += sale_amount
+                        total_profit += profit
+                        salesman_sales += sale_amount
+
+                        if name in item_profit:
+                            item_profit[name] += profit
+                        else:
+                            item_profit[name] = profit
+
+                        salesman_records.append({
+                            "salesman": salesman_name,
+                            "item": name,
+                            "quantity": qty,
+                            "amount": sale_amount,
+                            "commission": round(commission, 2)
+                        })
+
+                        print("Sale recorded successfully!")
+                        print(f"Sold {qty} {name}(s) for {sale_amount}")
+                        print(f"Commission for {salesman_name}: {round(commission,2)}")
+                    else:
+                        print("Not enough stock")
+                else:
+                    print("Item not found!")
+
+            elif ch == "3":
+                print(f"\n------ SALESMAN REPORT for {salesman_name} ------")
+                print("+----------------------------------------------------------+")
+                print("| {:<15} | {:<10} | {:<10} | {:<10} |".format("Item", "Qty", "Amount", "Commission"))
+                print("+----------------------------------------------------------+")
+
+                sales_count = 0
+                total_commission = 0
+
+                for record in salesman_records:
+                    if record["salesman"] == salesman_name:
+                        print("| {:<15} | {:<10} | {:<10} | {:<10} |".format(
+                            record["item"],
+                            record["quantity"],
+                            record["amount"],
+                            record["commission"]
+                        ))
+                        sales_count += record["amount"]
+                        total_commission += record["commission"]
+
+                if sales_count == 0:
+                    print("| {:<43} |".format("No sales recorded"))
+                else:
+                    print("+----------------------------------------------------------+")
+                    print(f"Total Sales Amount: {sales_count}")
+                    print(f"Total Commission: {round(total_commission,2)}")
+
+                print("+----------------------------------------------------------+")
+
+            elif ch == "4":
+                print("Salesman session ended.")
+                break
+
+            else:
+                print("Invalid choice!")
 
 # EXIT
     elif choice == "3":
